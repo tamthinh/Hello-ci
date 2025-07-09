@@ -1,0 +1,29 @@
+name: Run Unit Test
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Lấy mã nguồn
+      uses: actions/checkout@v3
+
+    - name: Cài Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.10
+
+    - name: Tạo file giả lập để test
+      run: |
+        echo "def add(a, b): return a + b" > app.py
+        echo "import unittest" > test_app.py
+        echo "from app import add" >> test_app.py
+        echo "class TestAdd(unittest.TestCase):" >> test_app.py
+        echo "  def test_add(self):" >> test_app.py
+        echo "    self.assertEqual(add(1, 2), 3)" >> test_app.py
+        echo "if __name__ == '__main__': unittest.main()" >> test_app.py
+
+    - name: Chạy unit test
+      run: python -m unittest discover
